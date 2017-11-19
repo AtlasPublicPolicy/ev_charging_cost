@@ -40,8 +40,14 @@ def get_request_params():
         reader = csv.reader(request_params_file, delimiter=",")
         for row in reader:
             params[row[0]] = row[1]
-    params["api_key"] = \
-        open(os.path.join(os.getcwd(), "settings", "api_key.txt"),"r").read()
+    try:
+        params["api_key"] = \
+            open(os.path.join(os.getcwd(), "settings", "api_key.txt"),"r").read()
+    except IOError:
+        raise IOError(
+            "You need an API key: get it at "
+            "https://openei.org/services/api/signup/ and include it in a file "
+            "called 'api_key.txt' in the 'settings' subdirectory.")
 
     return params
 

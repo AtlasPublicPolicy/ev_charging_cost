@@ -1,0 +1,5 @@
+version,3
+format,json
+sector,Residential
+limit,500
+detail,full

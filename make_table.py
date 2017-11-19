@@ -198,13 +198,13 @@ if __name__ == "__main__":
     while remaining_records is True:
         request_params["offset"] = offset
         requested_records = request_records(request_params=request_params)
-        offset += len(requested_records["items"])
+
         remaining_records = \
             False if len(requested_records["items"]) == 0 else True
 
         if remaining_records is True:
             print("Processing records {}-{} of ~10,200...".format(
-                offset + 1-500, offset)
+                offset + 1, offset + len(requested_records["items"]))
             )
             for r in requested_records["items"]:
                 if filter_record(record=r)[0]:
@@ -240,5 +240,6 @@ if __name__ == "__main__":
                             annual_charging_cost,
                             csv_writer=writer
                         )
+        offset += len(requested_records["items"])
 
     print("Done.")

@@ -105,7 +105,7 @@ def write_results_files_headers():
         charging_cost_writer = csv.writer(results_file, delimiter=",")
         # Write header
         charging_cost_writer.writerow(
-            ["label", "utility",
+            ["label", "utility", "eia_id",
              "rate_name", "rate_description", "rate_end_date",
              "source_url", "openei_url",
              "fixed_charge_first_meter", "ev_annual_charging_cost"]
@@ -117,7 +117,7 @@ def write_results_files_headers():
         filter_writer = csv.writer(results_file, delimiter=",")
         # Write header
         filter_writer.writerow(
-            ["label", "utility", "rate_name",  "rate_description",
+            ["label", "utility", "eia_id", "rate_name",  "rate_description",
              "rate_end_date", "source_url", "openei_url", "reason"]
         )
 
@@ -135,6 +135,7 @@ def write_charging_cost_results(
     csv_writer.writerow([
         record["label"].encode("utf-8"),
         record["utility"].encode("utf-8"),
+        record["eiaid"] if "eiaid" in record.keys() else None,
         record["name"].encode("utf-8"),
         record["description"].encode("utf-8")
         if "description" in record.keys() else None,
@@ -160,6 +161,7 @@ def write_filter_results(record, csv_writer, why):
     csv_writer.writerow([
         record["label"].encode("utf-8"),
         record["utility"].encode("utf-8"),
+        record["eiaid"] if "eiaid" in record.keys() else None,
         record["name"].encode("utf-8"),
         record["description"].encode("utf-8")
         if "description" in record.keys() else None,

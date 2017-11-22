@@ -42,7 +42,8 @@ def get_request_params():
             params[row[0]] = row[1]
     try:
         params["api_key"] = \
-            open(os.path.join(os.getcwd(), "settings", "api_key.txt"),"r").read()
+            open(os.path.join(os.getcwd(), "settings", "api_key.txt"),
+                 "r").read()
     except IOError:
         raise IOError(
             "You need an API key: get it at "
@@ -100,7 +101,7 @@ def write_results_files_headers():
     """
     with open(os.path.join(
             os.getcwd(), "results", "ev_charging_cost_by_utility_rate.csv"
-    ), "w") as results_file:
+    ), "wb") as results_file:
         charging_cost_writer = csv.writer(results_file, delimiter=",")
         # Write header
         charging_cost_writer.writerow(
@@ -112,7 +113,7 @@ def write_results_files_headers():
 
     with open(os.path.join(
             os.getcwd(), "results", "filtered_records.csv"
-    ), "w") as results_file:
+    ), "wb") as results_file:
         filter_writer = csv.writer(results_file, delimiter=",")
         # Write header
         filter_writer.writerow(
@@ -212,7 +213,7 @@ if __name__ == "__main__":
                     reason = filter_record(record=r)[1]
                     with open(os.path.join(
                             os.getcwd(), "results", "filtered_records.csv"
-                    ), "a") as filter_results_file:
+                    ), "ab") as filter_results_file:
                         writer = csv.writer(filter_results_file, delimiter=",")
                         write_filter_results(
                             record=r,
@@ -230,7 +231,7 @@ if __name__ == "__main__":
                     with open(os.path.join(
                             os.getcwd(), "results",
                             "ev_charging_cost_by_utility_rate.csv"
-                    ), "a") as charging_results_file:
+                    ), "ab") as charging_results_file:
                         writer = csv.writer(
                             charging_results_file, delimiter=","
                         )

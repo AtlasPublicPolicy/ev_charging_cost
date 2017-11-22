@@ -49,7 +49,9 @@ def filter_by_end_date(record):
     :return:
     """
     if "enddate" in record.keys():
-        if datetime.datetime.fromtimestamp(record["enddate"]) \
+        if int(record["enddate"]) < 0:
+            return True
+        elif datetime.datetime.fromtimestamp(record["enddate"]) \
                 < datetime.datetime.now():
             return True
         else:

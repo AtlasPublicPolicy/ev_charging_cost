@@ -43,7 +43,7 @@ def get_request_params():
     try:
         params["api_key"] = \
             open(os.path.join(os.getcwd(), "settings", "api_key.txt"),
-                 "r").read()
+                 "r").readline()
     except IOError:
         raise IOError(
             "You need an API key: get it at "

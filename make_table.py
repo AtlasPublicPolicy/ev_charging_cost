@@ -93,6 +93,27 @@ def get_profile_inputs():
         charging_weekday, charging_weekend
 
 
+def calculate_annual_charging_kwh(database):
+    """
+    Calculate the annual charging kWh from the charging profile.
+    :param database:
+    :return:
+    """
+
+    c = database.cursor()
+    weekday_charging = c.execute(
+        """SELECT sum(ev_charging_kw * number_weekday_days_in_month)
+        FROM weekday_profiles;"""
+    ).fetchone()[0]
+    weekend_charging = c.execute(
+        """SELECT sum(ev_charging_kw * number_weekend_days_in_month)
+                FROM weekend_profiles;"""
+    ).fetchone()[0]
+    total_charging = weekday_charging + weekend_charging
+
+    return total_charging
+
+
 def write_results_files_headers():
     """
     Write the headers of the EV charging cost and filtered records results
@@ -108,7 +129,8 @@ def write_results_files_headers():
             ["label", "utility", "eia_id",
              "rate_name", "rate_description", "rate_end_date",
              "source_url", "openei_url",
-             "fixed_charge_first_meter", "ev_annual_charging_cost"]
+             "monthly_fixed_charge", "ev_annual_charging_cost",
+             "ev_annual_charging_kwh"]
         )
 
     with open(os.path.join(
@@ -123,12 +145,14 @@ def write_results_files_headers():
 
 
 def write_charging_cost_results(
-        record, calculated_annual_charging_cost, csv_writer
+        record, calculated_annual_charging_cost,
+        calculated_annual_charging_kwh, csv_writer
 ):
     """
     Write the charging cost results for a record.
     :param record:
     :param calculated_annual_charging_cost:
+    :param calculated_annual_charging_kwh:
     :param csv_writer:
     :return:
     """
@@ -145,7 +169,8 @@ def write_charging_cost_results(
         record["uri"].encode("utf-8"),
         record["fixedmonthlycharge"]
         if "fixedmonthlycharge" in record.keys() else None,
-        calculated_annual_charging_cost
+        calculated_annual_charging_cost,
+        calculated_annual_charging_kwh
     ]
     )
 
@@ -230,6 +255,12 @@ if __name__ == "__main__":
                         charging_weekday_profile=charging_weekday_profile,
                         charging_weekend_profile=charging_weekend_profile
                     )
+
+                    # Charging profile annual kWh
+                    annual_charging_kwh = calculate_annual_charging_kwh(
+                        database=db)
+
+                    # Write results
                     with open(os.path.join(
                             os.getcwd(), "results",
                             "ev_charging_cost_by_utility_rate.csv"
@@ -241,8 +272,10 @@ if __name__ == "__main__":
                             record=r,
                             calculated_annual_charging_cost=
                             annual_charging_cost,
+                            calculated_annual_charging_kwh=annual_charging_kwh,
                             csv_writer=writer
                         )
+
         offset += len(requested_records["items"])
 
     print("Done.")

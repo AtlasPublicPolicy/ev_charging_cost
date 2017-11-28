@@ -130,7 +130,7 @@ def write_results_files_headers():
              "rate_name", "rate_description", "rate_end_date",
              "source_url", "openei_url",
              "monthly_fixed_charge", "ev_annual_charging_cost",
-             "ev_annual_charging_kwh"]
+             "ev_annual_charging_kwh", "ev_specific_rate"]
         )
 
     with open(os.path.join(
@@ -146,13 +146,15 @@ def write_results_files_headers():
 
 def write_charging_cost_results(
         record, calculated_annual_charging_cost,
-        calculated_annual_charging_kwh, csv_writer
+        calculated_annual_charging_kwh, ev_specific_rate,
+        csv_writer
 ):
     """
     Write the charging cost results for a record.
     :param record:
     :param calculated_annual_charging_cost:
     :param calculated_annual_charging_kwh:
+    :param ev_specific_rate:
     :param csv_writer:
     :return:
     """
@@ -170,7 +172,8 @@ def write_charging_cost_results(
         record["fixedmonthlycharge"]
         if "fixedmonthlycharge" in record.keys() else None,
         calculated_annual_charging_cost,
-        calculated_annual_charging_kwh
+        calculated_annual_charging_kwh,
+        "yes" if ev_specific_rate else "no"
     ]
     )
 
@@ -248,12 +251,20 @@ if __name__ == "__main__":
                             why=reason
                         )
                 else:
+                    # Is this is an EV-specific rate
+                    ev_specific = \
+                        True if "EV" in r["name"] \
+                                or "electric vehicle" in r["name"].lower() \
+                        else False
+
+                    # Calculate charging cost
                     annual_charging_cost = process_record(
                         record=r, db=db,
                         baseline_weekday_profile=baseline_weekday_profile,
                         baseline_weekend_profile=baseline_weekend_profile,
                         charging_weekday_profile=charging_weekday_profile,
-                        charging_weekend_profile=charging_weekend_profile
+                        charging_weekend_profile=charging_weekend_profile,
+                        ev_specific=ev_specific
                     )
 
                     # Charging profile annual kWh
@@ -273,6 +284,7 @@ if __name__ == "__main__":
                             calculated_annual_charging_cost=
                             annual_charging_cost,
                             calculated_annual_charging_kwh=annual_charging_kwh,
+                            ev_specific_rate=ev_specific,
                             csv_writer=writer
                         )
 

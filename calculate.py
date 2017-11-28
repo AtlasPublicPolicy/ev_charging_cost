@@ -316,7 +316,9 @@ def make_db_tables(
     db.commit()
 
 
-def calculate_monthly_cost(record, month, day_type, tier_maximums, db):
+def calculate_monthly_cost(
+        record, month, day_type, tier_maximums, db, ev_specific
+):
     """
     Calculate the cost to charge an EV based on pre-specified baseline and
     charging profiles in a given month and 'day type.' Day types can be
@@ -357,16 +359,11 @@ def calculate_monthly_cost(record, month, day_type, tier_maximums, db):
     :param day_type:
     :param tier_maximums:
     :param db:
+    :param ev_specific:
     :return:
     """
     c = db.cursor()
     month_index = month - 1
-
-    # Is this is an EV-specific rate
-    ev_specific = \
-        True if "EV" in record["name"] \
-                or "electric vehicle" in record["name"].lower() \
-        else False
 
     # Get the baseline and EV consumption for the month
     # If this is an EV-specific rate, the baseline consumption is 0
@@ -529,7 +526,8 @@ def calculate_monthly_cost(record, month, day_type, tier_maximums, db):
 def process_record(
         record, db,
         baseline_weekday_profile, baseline_weekend_profile,
-        charging_weekday_profile, charging_weekend_profile
+        charging_weekday_profile, charging_weekend_profile,
+        ev_specific
 ):
     """
 
@@ -539,6 +537,7 @@ def process_record(
     :param baseline_weekend_profile:
     :param charging_weekday_profile:
     :param charging_weekend_profile:
+    :param ev_specific:
     :return:
     """
     make_db_tables(record=record, db=db,
@@ -574,6 +573,7 @@ def process_record(
                 record=record, month=month,
                 day_type=day_type,
                 tier_maximums=tier_maximums,
-                db=db
+                db=db,
+                ev_specific=ev_specific
             )
     return annual_charging_cost

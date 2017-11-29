@@ -474,12 +474,13 @@ def calculate_monthly_cost(
                     daily_charging_cost += \
                         remaining_ev_charging_kwh \
                         * rate_period_weights[rate_period] \
-                        * record["energyratestructure"][rate_period][tier][
-                            "rate"] \
-                        + (record["energyratestructure"][rate_period][tier][
-                               "adj"]
-                            if "adj" in record["energyratestructure"][
+                        * (record["energyratestructure"][rate_period][tier][
+                            "rate"]
+                            + (record["energyratestructure"][rate_period][tier
+                               ]["adj"]
+                                if "adj" in record["energyratestructure"][
                                 rate_period][tier].keys() else 0)
+                           )
                 # No EV charging left to do
                 remaining_ev_charging_kwh = 0
 
@@ -491,12 +492,13 @@ def calculate_monthly_cost(
                     daily_charging_cost += \
                         (tier_max_kwh_daily - daily_baseline_kwh) \
                         * rate_period_weights[rate_period] \
-                        * record["energyratestructure"][rate_period][tier][
-                            "rate"] \
-                        + (record["energyratestructure"][rate_period][tier][
-                               "adj"]
-                            if "adj" in record["energyratestructure"][
+                        * (record["energyratestructure"][rate_period][tier][
+                            "rate"]
+                            + (record["energyratestructure"][rate_period][tier
+                               ]["adj"]
+                                if "adj" in record["energyratestructure"][
                                 rate_period][tier].keys() else 0)
+                           )
                 # Subtract the amount we charged in this tier from the
                 # remaining charging
                 remaining_ev_charging_kwh -= \
@@ -508,11 +510,13 @@ def calculate_monthly_cost(
                 daily_charging_cost += \
                     remaining_ev_charging_kwh \
                     * rate_period_weights[rate_period] \
-                    * record["energyratestructure"][rate_period][tier][
-                        "rate"] \
-                    + (record["energyratestructure"][rate_period][tier]["adj"]
-                        if "adj" in record["energyratestructure"][
+                    * (record["energyratestructure"][rate_period][tier][
+                        "rate"]
+                        + (record["energyratestructure"][rate_period][tier][
+                               "adj"]
+                            if "adj" in record["energyratestructure"][
                             rate_period][tier].keys() else 0)
+                       )
             remaining_ev_charging_kwh = 0
 
     # Convert daily cost to monthly cost

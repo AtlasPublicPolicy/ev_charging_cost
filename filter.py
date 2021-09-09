@@ -78,7 +78,7 @@ def filter_by_keyword(record):
         for item in reader:
             keyword_list += item
 
-        if any(keyword.lower() in name.lower() for
+        if any(keyword.lower() in name.decode('utf8').lower() for
                keyword
                in keyword_list):  # case insensitive
             return True

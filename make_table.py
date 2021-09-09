@@ -67,7 +67,7 @@ def get_profile_inputs():
             os.path.join(os.getcwd(), 'inputs', 'baseline_profile.csv'),
             'r') as baseline_profile_file:
         reader = csv.reader(baseline_profile_file)
-        reader.next()  # skip header
+        next(reader)  # skip header
         for row in reader:
             if int(row[0]) not in baseline_weekday.keys():
                 baseline_weekday[int(row[0])] = OrderedDict()
@@ -80,7 +80,7 @@ def get_profile_inputs():
             os.path.join(os.getcwd(), 'inputs', 'charging_profile.csv'),
             'r') as charging_profile_file:
         reader = csv.reader(charging_profile_file)
-        reader.next()  # skip header
+        next(reader)  # skip header
         for row in reader:
             if int(row[0]) not in charging_weekday.keys():
                 charging_weekday[int(row[0])] = OrderedDict()
@@ -122,7 +122,7 @@ def write_results_files_headers():
     """
     with open(os.path.join(
             os.getcwd(), "results", "ev_charging_cost_by_utility_rate.csv"
-    ), "wb") as results_file:
+    ), "w", newline="") as results_file:
         charging_cost_writer = csv.writer(results_file, delimiter=",")
         # Write header
         charging_cost_writer.writerow(
@@ -135,7 +135,7 @@ def write_results_files_headers():
 
     with open(os.path.join(
             os.getcwd(), "results", "filtered_records.csv"
-    ), "wb") as results_file:
+    ), "w", newline="") as results_file:
         filter_writer = csv.writer(results_file, delimiter=",")
         # Write header
         filter_writer.writerow(
@@ -243,7 +243,7 @@ if __name__ == "__main__":
                     reason = filter_record(record=r)[1]
                     with open(os.path.join(
                             os.getcwd(), "results", "filtered_records.csv"
-                    ), "ab") as filter_results_file:
+                    ), "a", newline="") as filter_results_file:
                         writer = csv.writer(filter_results_file, delimiter=",")
                         write_filter_results(
                             record=r,
@@ -275,7 +275,7 @@ if __name__ == "__main__":
                     with open(os.path.join(
                             os.getcwd(), "results",
                             "ev_charging_cost_by_utility_rate.csv"
-                    ), "ab") as charging_results_file:
+                    ), "a", newline="") as charging_results_file:
                         writer = csv.writer(
                             charging_results_file, delimiter=","
                         )
